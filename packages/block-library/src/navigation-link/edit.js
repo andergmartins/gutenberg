@@ -58,7 +58,7 @@ function NavigationLinkEdit( {
 	mergeBlocks,
 	onReplace,
 } ) {
-	const { label, opensInNewTab, url, description, rel } = attributes;
+	const { label, opensInNewTab, url, description, rel, type } = attributes;
 	const link = {
 		url,
 		opensInNewTab,
@@ -119,8 +119,7 @@ function NavigationLinkEdit( {
 	}
 
 	async function handleCreatePage( pageTitle ) {
-		const type = 'page';
-		const page = await saveEntityRecord( 'postType', type, {
+		const page = await saveEntityRecord( 'postType', 'page', {
 			title: pageTitle,
 			status: 'publish',
 		} );
@@ -234,10 +233,14 @@ function NavigationLinkEdit( {
 								showInitialSuggestions={ true }
 								withCreateSuggestion={ userCanCreatePages }
 								createSuggestion={ handleCreatePage }
+								suggestionsQuery={ {
+									subtype: type,
+								} }
 								onChange={ ( {
 									title: newTitle = '',
 									url: newURL = '',
 									opensInNewTab: newOpensInNewTab,
+									type,
 									id,
 								} = {} ) =>
 									setAttributes( {
@@ -265,7 +268,9 @@ function NavigationLinkEdit( {
 											return escape( normalizedURL );
 										} )(),
 										opensInNewTab: newOpensInNewTab,
-										id,
+										objectType: 'post_type',
+										objectName: type,
+										objectId: id,
 									} )
 								}
 							/>
